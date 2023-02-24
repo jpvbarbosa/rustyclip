@@ -25,7 +25,7 @@ fn main() {
 
     let config = Config { mem_capacity: mem_capacity as usize};
 
-    let mut clipboard = Vec::<String>::with_capacity(config.mem_capacity);
+    let _clipboard = Vec::<String>::with_capacity(config.mem_capacity);
 
     poll()
 
@@ -42,7 +42,7 @@ fn main_process(clipboard: &mut Vec::<String>)
 
         clipboard.push(input.trim().to_string()); // Temporary trim to remove \n from console input
 
-        println!("Clipboard is {:?}", clipboard)
+        println!("Clipboard is {clipboard:?}")
     }
 }
 
@@ -63,7 +63,7 @@ fn poll() {
             let curr = curr.trim_matches('\u{0}');
             if !curr.is_empty() && last != curr {
                 last = curr.to_owned();
-                println!("Contents of primary selection: `{}`", last);
+                println!("Contents of primary selection: `{last}`");
                 println!("Waiting for selection...");
             }
         }
