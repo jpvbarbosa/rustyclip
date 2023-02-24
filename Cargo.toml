@@ -8,3 +8,5 @@ edition = "2021"
 [dependencies]
 fs = "0.0.5"
 toml = "0.7.2"
+x11 = "2.21.0"
+x11-clipboard = "0.7.0"

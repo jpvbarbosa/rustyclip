@@ -1,6 +1,7 @@
 use std::io;
 use std::fs;
 use toml::Table;
+use x11_clipboard::Clipboard;
 
 struct Config{
     mem_capacity: usize
@@ -26,9 +27,10 @@ fn main() {
 
     let mut clipboard = Vec::<String>::with_capacity(config.mem_capacity);
 
-    main_process(&mut clipboard);
-}
+    poll()
 
+    //main_process(&mut clipboard);
+}
 
 fn main_process(clipboard: &mut Vec::<String>)
 {
@@ -41,5 +43,29 @@ fn main_process(clipboard: &mut Vec::<String>)
         clipboard.push(input.trim().to_string()); // Temporary trim to remove \n from console input
 
         println!("Clipboard is {:?}", clipboard)
+    }
+}
+
+// From https://github.com/quininer/x11-clipboard/blob/master/examples/monitor_primary_selection.rs
+fn poll() {
+    let clipboard = Clipboard::new().unwrap();
+    let mut last = String::new();
+
+    println!("Waiting for selection...");
+
+    loop {
+        if let Ok(curr) = clipboard.load_wait(
+            clipboard.getter.atoms.primary,    
+            clipboard.getter.atoms.utf8_string,
+            clipboard.getter.atoms.property
+        ) {
+            let curr = String::from_utf8_lossy(&curr);
+            let curr = curr.trim_matches('\u{0}');
+            if !curr.is_empty() && last != curr {
+                last = curr.to_owned();
+                println!("Contents of primary selection: `{}`", last);
+                println!("Waiting for selection...");
+            }
+        }
     }
 }
